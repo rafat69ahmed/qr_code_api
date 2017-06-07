@@ -49,17 +49,17 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
-    protected function validator(array $data)
-    {
-        return Validator::make($data, [
-            'name'      => 'required|max:255',
-            'email'     => 'required|email|max:255|unique:users',
-            'password'  => 'required|min:6|confirmed',
-            'birthday'  => 'required',
-            'gender'    => 'required',
-            'userType'  => 'required',
-        ]);
-    }
+    // protected function validator(array $data)
+    // {
+    //     return Validator::make($data, [
+    //         'name'      => 'required|max:255',
+    //         'email'     => 'required|email|max:255|unique:users',
+    //         'password'  => 'required|min:6|confirmed',
+    //         'birthday'  => 'required',
+    //         'gender'    => 'required',
+    //         'userType'  => 'required',
+    //     ]);
+    // }
 
     /**
      * Create a new user instance after a valid registration.
@@ -69,17 +69,41 @@ class RegisterController extends Controller
      */
     protected function create(Request $request)
     {
-        // return response()->json($request->all());
+        $validator = \Validator::make( $request->all(), [
+            'name'      => 'required|max:255',
+            'email'     => 'required|email|max:255|unique:users',
+            'password'  => 'required|min:6',
+            'birthday'  => 'required',
+            'gender'    => 'required',
+            'userType'  => 'required',
+        ]);
+
+        if ( $validator->fails() ) {
+            return response()->json( $validator->errors(), 422 );
+        }
         $user = new User;
         $user->name = $request->input('name');
         $user->email = $request->input('email');
         $user->birthday = $request->input('birthday');
         $user->gender = $request->input('gender');
-        $user->imageLink = $request->input('imageLink');
+        // $user->imageLink = $request->input('imageLink');
         $user->userType = $request->input('userType');
         $user->password = bcrypt($request->input('password'));
-        $user->save();
-        return response()->json($user);
+        if($file = $request->hasFile('imageLink'))
+        {
+            $file = $request->file('imageLink') ;            
+            $fileName = $file->getClientOriginalName() ;
+            $destinationPath = public_path().'/images/' ;
+            $file->move($destinationPath,$fileName);
+            $user->imageLink =public_path('images/'.$fileName);
+            // $user->imageLink =$fileName;
+            $user->save();
+            return response()->json('user registration successfull');
+        }
+        // else
+        // {
+        //     return response()->json('user registration fail');
+        // }
 
         
     }

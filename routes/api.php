@@ -24,7 +24,11 @@ Route::group([ 'prefix' => 'v1' ], function(){
     Route::get('hello', 'HomeController@index');
     Route::post('authenticate', 'AuthenticateController@authenticate');
     Route::post( 'register', 'Auth\RegisterController@create' );
-    Route::get('user/{id?}', 'ProfileController@profile');
-    Route::post('info/store', 'QrCodeController@store');
-    Route::get('home', 'QrCodeController@home');
+
+    Route::group([ 'middleware' => ['ValidToken'] ], function(){
+        Route::get('user/{id?}', 'ProfileController@profile');
+        Route::post('info/store', 'QrCodeController@store');
+        Route::post('labooh', 'ProfileController@labooh');
+        Route::get('home', 'QrCodeController@home');
+    });
 });
