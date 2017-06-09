@@ -37,7 +37,7 @@ class ValidToken
         // }
         
         // Add decoded user with request.
-        $currentUser->id           = $payload->get( 'id' );
+        // $currentUser->id           = $payload->get( 'id' );
         // // $currentUser->organization = $payload->get( 'organization' );
         $request->currentUser = $currentUser;
         $request->attributes->add( [ 'currentUser' => $currentUser ] );

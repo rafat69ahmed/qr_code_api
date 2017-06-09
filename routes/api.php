@@ -28,7 +28,8 @@ Route::group([ 'prefix' => 'v1' ], function(){
     Route::group([ 'middleware' => ['ValidToken'] ], function(){
         Route::get('user/{id?}', 'ProfileController@profile');
         Route::post('info/store', 'QrCodeController@store');
-        Route::post('labooh', 'ProfileController@labooh');
+        Route::post('user/type', 'ProfileController@labooh');
         Route::get('home', 'QrCodeController@home');
+        Route::get('merchant/promo', 'QrCodeController@promoList');
     });
 });

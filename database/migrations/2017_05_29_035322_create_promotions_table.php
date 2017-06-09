@@ -18,11 +18,22 @@ class CreatePromotionsTable extends Migration
             $table->increments('id');
             $table->string('promoCode')->unique();
             $table->boolean('status');
+            $table->date('expire_at');
 
             $table->integer('qrCodeInformationId')->unsigned();
             $table->foreign('qrCodeInformationId')
                   ->references('id')
                   ->on('qr_code_informations')
+                  ->onDelete('cascade');
+            $table->integer('merchantId')->unsigned();//from info request
+            $table->foreign('merchantId')
+                  ->references('id')
+                  ->on('users')
+                  ->onDelete('cascade');
+            $table->integer('userId')->unsigned();//current user
+            $table->foreign('userId')
+                  ->references('id')
+                  ->on('users')
                   ->onDelete('cascade');
             $table->softDeletes();
             $table->timestamps();

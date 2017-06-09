@@ -6,18 +6,22 @@ use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
 use App\QrCodeInformation;
 use App\Promotion;
+// use App\Promotion;
 use Carbon\Carbon;
 
 class QrCodeController extends Controller
 {
     //
     public function home()
-    {
-        $fromDate = Carbon::now()->subWeek()->toDateString();
-        $tillDate = Carbon::now()->toDateString();
-        $promoCodes = Promotion::WhereBetween('created_at',array($fromDate,$tillDate))->get();
+    {   
+        $merchantId = \Request::get( 'currentUser')->id;
+        $fromDate   = Carbon::now()->subWeek()->toDateString();
+        $tillDate   = Carbon::tomorrow()->toDateString();
+        // $promoCodes = Promotion::all();
+        $promoCodes = Promotion::where( 'merchantId', $merchantId )
+                                ->WhereBetween('created_at',array($fromDate,$tillDate))->paginate(4);
+        // return response()->json($tillDate);
         return response()->json($promoCodes);
-        // return response()->json([$fromDate,$tillDate]);
     }
     public function store(Request $request)
     {
@@ -35,6 +39,7 @@ class QrCodeController extends Controller
         $qr = new QrCodeInformation;
         $qr->productId    = $request->input('productId');
         $qr->merchantId   = $request->input('merchantId');
+        $qr->userId       = $request->currentUser->id;
         $qr->validity     = $request->input('validity');
 
         $productId =  QrCodeInformation::where('productId', $request->input('productId'))->first();
@@ -42,11 +47,17 @@ class QrCodeController extends Controller
         {   
             // $qId = QrCodeInformation::
             $promo = new Promotion;
+            // $promo = new Promotion;
             $promo->status = 0;
             $promo->qrCodeInformationId = $productId->id;
             $qrCodeMain = Promotion::where('qrCodeInformationId',$productId->id)->get();
+            // $qrCodeMain = Promotion::where('qrCodeInformationId',$productId->id)->get();
             $qrCodeCount = $qrCodeMain->count();
-            $promo->promoCode = uniqid().md5(time());
+            $promo->promoCode = uniqid();
+            $promo->merchantId   = $request->input('merchantId');
+            $promo->userId       = $request->currentUser->id;
+            $promo->expire_at     = $qr->validity;
+            // $promo->promoCode = uniqid().md5(time());
             if($qrCodeCount == 8)
             {
                 return response()->json(['qrCode limit reached', $qrCodeCount]);
@@ -70,10 +81,15 @@ class QrCodeController extends Controller
             $qr->save();
             
             $promo = new Promotion;
+            // $promo = new Promotion;
             $promo->status = 0;
             $promo->qrCodeInformationId = $qr->id;
-            $promo->promoCode = uniqid().md5(time());
+            $promo->promoCode = uniqid();
+            $promo->merchantId   = $request->input('merchantId');
+            $promo->userId       = $request->currentUser->id;
+            $promo->expire_at     = $qr->validity;
             $qrCodeMain = Promotion::where('qrCodeInformationId',$productId->id)->get();
+            // $qrCodeMain = Promotion::where('qrCodeInformationId',$productId->id)->get();
             $qrCodeCount = $qrCodeMain->count();
             if($qrCodeCount == 8)
             {
@@ -87,6 +103,33 @@ class QrCodeController extends Controller
         }
         // return response()->json( [$qr,'pro code generated'] );
         // return response()->json( "mara khao" );
-
     }
+
+    public function profile($id = false)
+    {
+        if($id){
+            return response()->json(User::where('id', $id)->get());
+        } else {
+            return response()->json(User::all());
+        }
+    }
+    public function test()
+    {
+            // $userType = 
+            $merchantId= \Request::get( 'currentUser')->id;
+            return response()->json($merchantId);
+            // return response()->json($request->currentUser);
+    }
+    public function promoList()
+    {
+        $merchantId = \Request::get( 'currentUser')->id;
+        $promoCodes = Promotion::where( 'merchantId', $merchantId )->paginate(4);
+        // return response()->json($tillDate);
+        return response()->json($promoCodes);
+    }
+
+
+
+
+    
 }

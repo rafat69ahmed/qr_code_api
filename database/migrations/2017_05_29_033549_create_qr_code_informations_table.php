@@ -16,9 +16,19 @@ class CreateQrCodeInformationsTable extends Migration
         //
         Schema::create('qr_code_informations', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('merchantId');
+            // $table->integer('merchantId');
             $table->string('productId')->unique();
             $table->date('validity');
+            $table->integer('merchantId')->unsigned();//info from request
+            $table->foreign('merchantId')
+                  ->references('id')
+                  ->on('users')
+                  ->onDelete('cascade');
+            $table->integer('userId')->unsigned();//current user
+            $table->foreign('userId')
+                  ->references('id')
+                  ->on('users')
+                  ->onDelete('cascade');
             $table->softDeletes();
             $table->timestamps();
         });

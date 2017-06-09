@@ -19,6 +19,6 @@ class ProfileController extends Controller
     public function labooh(Request $request)
     {
             // $userType = 
-            return response()->json($request->currentUser->userType);
+            return response()->json($request->currentUser);
     }
 }
