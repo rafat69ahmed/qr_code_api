@@ -20,7 +20,7 @@ class QrCodeController extends Controller
         // $promoCodes = Promotion::all();
         $promoCodes = Promotion::where( 'merchantId', $merchantId )
                                 ->WhereBetween('created_at',array($fromDate,$tillDate))->paginate(4);
-        // return response()->json($tillDate);
+        // return response()->json($merchantId);
         return response()->json($promoCodes);
     }
     public function store(Request $request)
@@ -113,11 +113,21 @@ class QrCodeController extends Controller
             return response()->json(User::all());
         }
     }
-    public function test()
+    public function test(Request $request)
     {
             // $userType = 
-            $merchantId= \Request::get( 'currentUser')->id;
-            return response()->json($merchantId);
+            // $start  = $request->startDate;
+            // $end    = $request->endDate;
+            $merchantId = $request->currentUser->id;
+            $fromDate   = $request->startDate;
+            $tillDate   = $request->endDate;
+            // return response()->json($request->currentUser->id);
+            // return response()->json([$fromDate,$tillDate]);
+            // $promoCodes = Promotion::all();
+            $promoCodes = Promotion::where( 'merchantId', $merchantId )
+                                    ->WhereBetween('created_at',array($fromDate,$tillDate))->paginate(4);
+            // return response()->json($tillDate);
+            return response()->json($promoCodes);
             // return response()->json($request->currentUser);
     }
     public function promoList()

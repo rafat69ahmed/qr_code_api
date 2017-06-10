@@ -100,10 +100,10 @@ class RegisterController extends Controller
             $user->save();
             return response()->json('user registration successfull');
         }
-        // else
-        // {
-        //     return response()->json('user registration fail');
-        // }
+        else
+        {
+            return response()->json('no image given or saved');
+        }
 
         
     }

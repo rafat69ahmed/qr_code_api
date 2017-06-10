@@ -31,5 +31,6 @@ Route::group([ 'prefix' => 'v1' ], function(){
         Route::post('user/type', 'ProfileController@labooh');
         Route::get('home', 'QrCodeController@home');
         Route::get('merchant/promo', 'QrCodeController@promoList');
+        Route::post('date', 'QrCodeController@test');
     });
 });
