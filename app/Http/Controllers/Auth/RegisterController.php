@@ -96,7 +96,6 @@ class RegisterController extends Controller
             $destinationPath = public_path().'/images/' ;
             $file->move($destinationPath,$fileName);
             $user->imageLink =public_path('images/'.$fileName);
-            // $user->imageLink =$fileName;
             $user->save();
             return response()->json('user registration successfull');
         }
@@ -104,6 +103,7 @@ class RegisterController extends Controller
         {
             return response()->json('no image given or saved');
         }
+        
 
         
     }

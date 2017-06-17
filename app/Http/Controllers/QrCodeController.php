@@ -137,7 +137,52 @@ class QrCodeController extends Controller
         // return response()->json($tillDate);
         return response()->json($promoCodes);
     }
+    public function userPromoList()
+    {
+        $userId = \Request::get( 'currentUser')->id;
+        $promoCodes = Promotion::where( 'userId', $userId )->paginate(4);
+        // return response()->json($tillDate);
+        return response()->json($promoCodes);
+    }
 
+    public function userDateList(Request $request)
+    {
+            $userId = $request->currentUser->id;
+            $fromDate   = $request->startDate;
+            $tillDate   = $request->endDate;
+            $promoCodes = Promotion::where( 'userId', $userId )
+                                    ->WhereBetween('created_at',array($fromDate,$tillDate))->paginate(4);
+            // return response()->json($fromDate);
+            return response()->json($promoCodes);
+            // return response()->json($promoCodes);
+    }
+    public function promoJustify(Request $request)
+    {
+            $promocode  = $request->input('promocode');
+            $merchantId = $request->currentUser->id;
+            $promo = Promotion::where( 'merchantId', $merchantId )
+                                    ->Where('promoCode', $promocode)->first();
+            if($promo !=null)
+                {
+                    if($promo->status ==1)
+                        {
+                            return response()->json('sorry this promo code has been used already');
+                        }
+                    else
+                        {
+                            $promo->status = 1;
+                            $promo->save();
+                            return response()->json('your promo code successfully mached thank you for being with us');
+                        }
+                }
+            else
+                {
+                    return response()->json('this promo code does not exist or current merchant is not authorized to access this promo code ');
+                }
+            // return response()->json($fromDate);
+            // return response()->json($promo);
+            // return response()->json($promoCodes);
+    }
 
 
 
