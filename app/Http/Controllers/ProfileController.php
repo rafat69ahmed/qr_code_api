@@ -21,4 +21,30 @@ class ProfileController extends Controller
             // $userType = 
             return response()->json($request->currentUser);
     }
+
+    public function index()
+    {
+        // return view('admin');
+        $user = User::where('userType', 'user')->get();
+        $merchant = User::where('userType', 'merchant')->get();
+        return view('admin', [
+            'users'                  => $user,
+            'merchants'              => $merchant
+        ]);
+        // return response()->json([$user,$merchant]); 
+    }
+
+    public function userDelete($id)
+    {   
+        User::findOrFail($id)->delete();
+        return redirect('api/v1/test');
+    }
+    // public function merchantDelete($id)
+    // {   
+    //     User::findOrFail($id)->delete();
+    //     return redirect('api/v1/test');
+    // }
+
+
+
 }

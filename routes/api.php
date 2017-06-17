@@ -21,7 +21,9 @@ Route::get('/user', function (Request $request) {
 
 Route::group([ 'prefix' => 'v1' ], function(){
     // Get token using default user auth
-    Route::get('hello', 'HomeController@index');
+    // Route::get('hello', 'HomeController@index');
+    Route::get('/test', 'ProfileController@index');
+    Route::delete('delete/user/{id}',   'ProfileController@userDelete');
     Route::post('authenticate', 'AuthenticateController@authenticate');
     Route::post( 'register', 'Auth\RegisterController@create' );
 
