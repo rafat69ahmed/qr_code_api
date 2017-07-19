@@ -42,9 +42,7 @@
                     </button>
 
                     <!-- Branding Image -->
-                    <a class="navbar-brand" href="{{ url('/') }}">
-                        {{ config('app.name', 'Laravel') }}
-                    </a>
+                    <img src="{{URL::asset('/images/logo.jpg')}}" class="img-rounded" alt="logo" width="100" height="50"> 
                 </div>
 
                 <div class="collapse navbar-collapse" id="app-navbar-collapse">
